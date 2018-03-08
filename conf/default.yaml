@@ -1,0 +1,136 @@
+config: './conf/default.yaml'
+config_filename: default.yaml
+description: "Default atari"
+
+# Environment -------------------------------------------------------------------- #
+
+# Environment ID:
+# "push-default", or atari game name
+# e.g. "Breakout", "Seaquest", "Pong", "MsPacman"
+env_id: Seaquest
+
+# Number of previous frames stacked into observation
+nstack: 4
+
+# Frameskip
+frameskip: 10
+
+# Model -------------------------------------------------------------------------- #
+
+# Use an actor-critic model. If False, uses n-step Q-learning.
+use_actor_critic: False
+
+# Policy architecture.
+# - dqn
+# - treeqn
+architecture: treeqn
+
+# Depth of tree planning.
+tree_depth: 2
+
+# Extra layers for DQN-Deep
+extra_layers: 0
+
+# Transition model name.
+# - matrix
+# - two_layer
+transition_fun_name: two_layer
+
+# Nonlinearity for transition function
+# - tanh
+# - relu
+transition_nonlin: tanh
+
+# Function used for aggregating values in backup
+# - max
+# - logsumexp
+# - softmax
+value_aggregation: softmax
+
+# L2 normalise states
+normalise_state: True
+
+# Add incoming state to output of transition model (i.e. predict difference in states)
+residual_transition: True
+
+# Dimension of hidden state representations.
+embedding_dim: 512
+
+# Lambda for mixing returns a la TD(lambda). 0 = no planning, 1 = only leaf nodes.
+td_lambda: 0.8
+
+# Uses a reward prediction module and aggregates rewards through the tree
+predict_rewards: True
+
+# Coefficient of reward prediction loss. Set > 0 to enable.
+rew_loss_coef: 1.0
+
+# Coefficient of latent state loss. Set > 0 to enable.
+st_loss_coef: 0.0
+
+# Coefficient of subtree value loss. Set > 0 to enable.
+subtree_loss_coef: 0.0
+
+# Training ----------------------------------------------------------------------- #
+
+# Discount factor
+gamma: 0.99
+
+# How many frames to train (/ 1e6). This number gets divided by frameskip.
+million_frames: 400
+
+# million frames over which epsilon is linearly decayed
+eps_million_frames: 4
+
+# Number of threads for running environments in parallel.
+num_cpu: 16
+
+# Number of steps in each env thread between model updates
+nsteps: 5
+
+# Number of frames between target network updates.
+target_update_interval: 40000
+
+# Optimisation ------------------------------------------------------------------- #
+
+# RMSprop decay
+alpha: 0.99
+
+# RMSprop epsilon
+epsilon: 0.00001
+
+# RMSprop learning rate
+lr: 0.0001
+
+# Learning rate schedule: constant, linear.
+lrschedule: constant
+
+# Max gradient norm for gradient clipping
+max_grad_norm: 5
+
+# Coefficient of value loss (relative policy loss) for actor-critic
+vf_coef: 0.5
+
+# Coefficient for entropy loss
+ent_coef: 0.01
+
+# Logging, debugging, misc ------------------------------------------------------- #
+
+# Logging temporary per-thread results
+save_folder: "./results/temp/"
+
+# Number of model updates between logging
+log_interval: 1000
+
+# Records full statistics for debugging. Can be memory-hungry due to Sacred.
+debug_log: False
+
+# Number of checkpoints where the whole model is saved.
+number_checkpoints: 3
+
+# Size of rolling window to calculate mean reward
+log_rolling_window: 100
+
+# Can be used in experiment definitions to help sorting the results
+label: "default"
+name: "default"

@@ -1,0 +1,27 @@
+parent_config: './conf/default.yaml'
+config_filename: push.yaml
+description: "Default push"
+
+# Environment -------------------------------------------------------------------- #
+
+# Environment ID:
+# "push-default", or atari game name
+# e.g. "Breakout", "Seaquest", "Pong", "MsPacman"
+env_id: push-default
+
+# Number of previous frames stacked into observation
+nstack: 1
+
+# Frameskip
+frameskip: 1
+
+# Dimension of hidden state representations.
+embedding_dim: 128
+
+# Training ----------------------------------------------------------------------- #
+
+# How many frames to train (/ 1e6). This number gets divided by frameskip.
+million_frames: 40
+
+# million frames over which epsilon is linearly decayed
+eps_million_frames: 4
