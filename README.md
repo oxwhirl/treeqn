@@ -1,5 +1,5 @@
 # TreeQN and ATreeC: Differentiable Tree Planning for Deep Reinforcement Learning
-Code of our ICML 2018 [paper](https://arxiv.org/abs/1710.11417).
+Code of our ICLR 2018 [paper](https://arxiv.org/abs/1710.11417).
 
 ## Requirements
 
