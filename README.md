@@ -44,10 +44,10 @@ To run an experiment in a detached docker container named `treeqn-$GPU_ID`, use:
 
 ## Citation
 ```
-@article{farquhar2018treeqn,
+@inproceedings{farquhar2018treeqn,
   title={TreeQN and ATreeC: Differentiable Tree-Structured Models for Deep Reinforcement Learning},
   author={Farquhar, Gregory and Rockt{\"a}schel, Tim and Igl, Maximilian and Whiteson, Shimon},
-  journal={ICLR 2018},
+  booktitle={ICLR 2018},
   year={2018}
 }
 ```
