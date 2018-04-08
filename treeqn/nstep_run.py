@@ -20,7 +20,10 @@ from treeqn.utils.bl_common.atari_wrappers import wrap_deepmind
 from treeqn.utils.treeqn_utils import get_timestamped_dir, append_scalar, append_list
 from treeqn.models.models import DQNPolicy, TreeQNPolicy
 from treeqn.envs.push import Push
+import myTorch
+from treeqn.envs.blocksworldMatrixEnv import BlocksWorldMatrixEnv
 from treeqn.nstep_learn import Learner, Runner
+
 from sacred import Experiment
 from sacred.arg_parser import parse_args
 from sacred.commands import save_config, print_config
@@ -80,6 +83,8 @@ def my_config(save_folder, env_id, architecture, label, name):
     obs_dtype, input_mode = 'uint8', "atari"
     if "push" in env_id:
         obs_dtype, input_mode = 'float32', "push"
+    if "blocksworld" in env_id:
+        obs_dtype, input_mode = 'float32', "blocksworld"
 
     if architecture == "dqn":
         predict_rewards = False
@@ -100,13 +105,20 @@ def create_env(env_id, monitor_dir, num_cpu, frameskip, seed, _run):
             if "push" in env_id:
                 mode = env_id.split("-")[-1]
                 env = Push(mode=mode)
+            elif "blocksworld" in env_id:
+                is_colorless = False
+                game_level = 2
+                env = BlocksWorldMatrixEnv(
+                        "treeqn/envs/games/colorless_{}".format(is_colorless), 
+                        game_level=game_level, 
+                        is_colorless=is_colorless)
             else:
                 env = gym.make(env_id + "NoFrameskip-v4")
             env.seed(seed + rank)
             filename = dir and os.path.join(dir, "%d.monitor.json" % rank)
             env = bench.Monitor(env, filename, cpu=rank)
             gym.logger.setLevel(logging.WARN)
-            if "push" not in env_id:
+            if "push" not in env_id and "blocksworld" not in env_id:
                 env = wrap_deepmind(env, skip=frameskip)
             return env
 

@@ -9,7 +9,7 @@ from torch.autograd import Variable
 from treeqn.utils.pytorch_utils import View, nn_init
 from treeqn.utils.einsum import einsum
 from treeqn.models.transitions import build_transition_fn, MLPRewardFn
-from treeqn.models.encoding import atari_encoder, push_encoder
+from treeqn.models.encoding import atari_encoder, push_encoder, blocksworld_encoder
 from treeqn.utils.pytorch_utils import logsumexp
 
 USE_CUDA = torch.cuda.is_available()
@@ -66,6 +66,10 @@ class TreeQNPolicy(nn.Module):
             self.obs_scale = 255.0
         elif input_mode == "push":
             encoder = push_encoder(ob_shape[1])
+            dummy = Variable(torch.zeros(1, *ob_shape[1:]))
+            conv_dim_out = tuple(encoder(dummy).size())[1:]
+        elif input_mode == "blocksworld":
+            encoder = blocksworld_encoder(ob_shape[1])
             dummy = Variable(torch.zeros(1, *ob_shape[1:]))
             conv_dim_out = tuple(encoder(dummy).size())[1:]
         else:

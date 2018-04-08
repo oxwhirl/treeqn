@@ -39,13 +39,13 @@ class Push(gym.Env):
         self.pos = None
         self.image = None
 
-        self._seed()
+        self.seed()
 
-    def _seed(self, seed=0):
+    def seed(self, seed=0):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def _reset(self):
+    def reset(self):
         state = np.zeros([self.w, self.w, 4 + self.use_obst])
         # initialise time-remaining to 1.
         state[:, :, 3 + self.use_obst].fill(1)
@@ -84,7 +84,7 @@ class Push(gym.Env):
 
         return self.state
 
-    def _step(self, action):
+    def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
 
         vec = self.directions[action]
