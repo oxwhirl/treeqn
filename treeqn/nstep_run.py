@@ -207,7 +207,6 @@ def train(nstack,
 
     # initialise environment and model
     env = create_env()
-    import pdb; pdb.set_trace()
     model = create_model(env)
     nbatch = env.num_envs * nsteps
 

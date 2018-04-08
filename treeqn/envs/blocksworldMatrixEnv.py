@@ -62,7 +62,7 @@ class BlocksWorldMatrixEnv(gym.Env):
         obs = combine_op((self._input_world.as_numpy(self._is_one_hot_world), self._target_world.as_numpy(self._is_one_hot_world)), axis=0)
         self._game_id = (self._game_id + 1) % self._num_available_games
         self._num_steps_done = 0
-        return obs
+        return np.transpose(obs,(1,2,0))
 
     @property
     def have_games_exhausted(self):
@@ -75,7 +75,7 @@ class BlocksWorldMatrixEnv(gym.Env):
         obs = combine_op((self._input_world.as_numpy(self._is_one_hot_world), self._target_world.as_numpy(self._is_one_hot_world)), axis=0)
         if self._num_steps_done >= self._num_steps_cutoff:
             done = True
-        return obs, reward, done, {}
+        return np.transpose(obs,(1,2,0)), reward, done, {}
 
     def create_games(self, num_levels):
         for level in range(2, num_levels+2):
@@ -97,7 +97,7 @@ class BlocksWorldMatrixEnv(gym.Env):
     
     @property
     def observation_space(self):
-        return spaces.Box(0, 1, (2, self._width, self._height), np.float32)
+        return spaces.Box(0, 1, (self._width, self._height, 2), np.float32)
     
     @property
     def obs_dim(self):
