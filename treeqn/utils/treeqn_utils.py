@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn.functional as F
 from treeqn.utils.pytorch_utils import cudify
@@ -13,12 +14,23 @@ def discount_with_dones(rewards, dones, gamma):
         discounted.append(r)
     return discounted[::-1]
 
+def make_seq_mask(mask):
+    mask = mask.numpy().astype(np.bool)
+    max_i = np.argmax(mask, axis=0)
+    if mask[max_i] == True:
+        mask[max_i:] = True
+    mask = ~np.expand_dims(mask, axis=-1) # tilde flips true and falses
+    return torch.from_numpy(mask.astype(np.float))
+
 # some utilities for interpreting the trees we return
-def build_sequences(sequences, nenvs, nsteps, depth, return_mask=False, offset=0):
+def build_sequences(sequences, masks, nenvs, nsteps, depth, return_mask=False, offset=0):
     # sequences are bs x size, containing e.g. rewards, actions, state reps
     # returns bs x depth x size processed sequences with a sliding window set by 'depth', padded with 0's
     # if return_mask=True also returns a mask showing where the sequences were padded
     # This can be used to produce targets for tree outputs, from the true observed sequences
+    tmp_masks = torch.from_numpy(masks.reshape(nenvs, nsteps).astype(np.int))
+    tmp_masks = F.pad(tmp_masks, (0, 0, 0, depth+offset), mode="constant", value=0).data
+
     sequences = [s.view(nenvs, nsteps, -1) for s in sequences]
     if return_mask:
         mask = torch.ones_like(sequences[0]).float()
@@ -29,7 +41,8 @@ def build_sequences(sequences, nenvs, nsteps, depth, return_mask=False, offset=0
         proc_seq = []
         for env in range(seq.shape[0]):
             for t in range(nsteps):
-                proc_seq.append(seq[env, t+offset:t+offset+depth, :])
+                seq_done_mask = make_seq_mask(tmp_masks[env, t+offset:t+offset+depth])
+                proc_seq.append(seq[env, t+offset:t+offset+depth, :].float() * seq_done_mask.float())
         proc_sequences.append(torch.stack(proc_seq))
     return proc_sequences
 
