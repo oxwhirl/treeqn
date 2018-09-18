@@ -84,7 +84,7 @@ class Learner(object):
 
         # compute the sequences we need to get back reward predictions
         action_sequences, reward_sequences, sequence_mask = build_sequences(
-            [torch.from_numpy(actions), torch.from_numpy(rewards)], self.nenvs, self.nsteps, self.tree_depth, return_mask=True)
+            [torch.from_numpy(actions), torch.from_numpy(rewards)], masks, self.nenvs, self.nsteps, self.tree_depth, return_mask=True)
         action_sequences = cudify(action_sequences.long().squeeze(-1))
         reward_sequences = make_variable(reward_sequences.squeeze(-1))
         sequence_mask = make_variable(sequence_mask.squeeze(-1))
@@ -124,7 +124,7 @@ class Learner(object):
 
         if self.use_st_loss:
             st_embeddings = tree_result["embeddings"][0]
-            st_targets, st_mask = build_sequences([st_embeddings.data], self.nenvs, self.nsteps, self.tree_depth, return_mask=True, offset=1)
+            st_targets, st_mask = build_sequences([st_embeddings.data], masks, self.nenvs, self.nsteps, self.tree_depth, return_mask=True, offset=1)
             st_targets = make_variable(st_targets.view(self.batch_size, -1))
             st_mask = make_variable(st_mask.view(self.batch_size, -1))
 
