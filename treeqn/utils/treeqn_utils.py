@@ -26,7 +26,7 @@ def build_sequences(sequences, masks, nenvs, nsteps, depth, return_mask=False, o
     # if return_mask=True also returns a mask showing where the sequences were padded
     # This can be used to produce targets for tree outputs, from the true observed sequences
     tmp_masks = torch.from_numpy(masks.reshape(nenvs, nsteps).astype(int))
-    tmp_masks = F.pad(tmp_masks, (0, 0, 0, depth+offset), mode="constant", value=0).data
+    tmp_masks = F.pad(tmp_masks, (0, depth+offset, 0, 0), mode="constant", value=1).data
 
     sequences = [s.view(nenvs, nsteps, -1) for s in sequences]
     if return_mask:
@@ -38,7 +38,7 @@ def build_sequences(sequences, masks, nenvs, nsteps, depth, return_mask=False, o
         proc_seq = []
         for env in range(seq.shape[0]):
             for t in range(nsteps):
-                seq_done_mask = make_seq_mask(tmp_masks[env, t+offset:t+offset+depth])
+                seq_done_mask = make_seq_mask(tmp_masks[env, t+offset:t+offset+depth].clone())
                 proc_seq.append(seq[env, t+offset:t+offset+depth, :].float() * seq_done_mask.float())
         proc_sequences.append(torch.stack(proc_seq))
     return proc_sequences
