@@ -38,12 +38,14 @@ RUN pip install gym==0.9.2
 RUN pip install gym[atari]
 
 # Sacred and other required packages
-RUN pip install sacred GitPython
+RUN pip install git+https://github.com/IDSIA/Sacred.git@d10a03b4a0087ad06e0f0874a147631e16d1864e
+RUN pip install GitPython
+# RUN pip install sacred GitPython
 
 # Section to get permissions right, and avoid running inside as root {{
     # Create a user matching the UID, and create/chmod home dir (== project directory)
     # (uid corresponds to breord in CS network)
-    RUN useradd -d /project -u <<UID>> --create-home user
+    RUN useradd -d /project -u 1001 --create-home user
     USER user
     WORKDIR /project/
     ADD . /project/
